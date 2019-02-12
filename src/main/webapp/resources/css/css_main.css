@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+body {
+    margin: 0 auto;
+    font-family: Noto Sans KR;
+}
+
+a {
+    color : black;
+    text-decoration : none;
+}
+
+input {
+	font-family: Noto Sans KR;
+	background : none;
+	color: gray;
+}	
+
+textarea {
+	font-family: Noto Sans KR;
+}
+
+a:hover { color : burlywood; }
+
+input:hover { color : burlywood; }
+			

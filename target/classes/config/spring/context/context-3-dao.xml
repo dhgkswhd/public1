@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- feed_dao -->
+	<bean id="feed_dao" class="com.fg.dao.FeedDAO">
+		<!-- mybatis.xml 에서 만든 객체 주입 
+			  dept_dao.setSqlSession( sqlSessionBean ) -->
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- friends_dao -->
+	<bean id="friends_dao" class="com.fg.dao.FriendsDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- friendsApply_dao -->
+	<bean id="friendsApply_dao" class="com.fg.dao.FriendsApplyDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- member_dao -->
+	<bean id="member_dao" class="com.fg.dao.MemberDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- profile_dao -->
+	<bean id="profile_dao" class="com.fg.dao.ProfileDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- comments_dao -->
+	<bean id="comments_dao" class="com.fg.dao.CommentsDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	<!-- message_dao -->
+	<bean id="message_dao" class="com.fg.dao.MessageDAO">
+		<property name="sqlSession" ref="sqlSessionBean"/>
+	</bean>
+	
+	
+</beans>

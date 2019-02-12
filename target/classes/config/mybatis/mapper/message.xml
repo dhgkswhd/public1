@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="message">
+	
+	<!-- 메세지 한줄 삽입 -->
+	<insert id="insertMsg" parameterType="message" useGeneratedKeys="false">
+		INSERT INTO MESSAGE VALUES ( seq_message.nextVal, #{my_id}, #{friend_id}, #{msg_text}, TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi'), #{checkcount}, #{room_name} )
+	</insert>	
+	
+	<!-- 이전 대화내용 가져오기 -->
+	<select id="myMsgList" parameterType="java.lang.String" resultType="message">
+		<!-- SELECT * FROM MESSAGE WHERE (MY_ID = #{my_id} or FRIEND_ID = #{my_id})
+		AND (MY_ID = #{friend_id} OR FRIEND_ID = #{friend_id}) ORDER BY MESSAGE_IDX -->
+		
+		SELECT P.PROFILE_IMAGE, M.* FROM 
+		MESSAGE M, PROFILE P 
+		WHERE P.MEMBER_ID = M.MY_ID
+		AND ROOM_NAME = #{room_name}
+		ORDER BY MESSAGE_IDX
+	</select>
+	
+	<!-- 안읽은 메세지 읽었을 때 처리 -->
+	<update id="updatecheck" parameterType="Map">
+		UPDATE MESSAGE SET CHECKCOUNT = 0 WHERE FRIEND_ID = #{my_id} AND MY_ID = #{friend_id}
+	</update>
+	
+	<!-- 안 읽은 메세지 개수 -->
+	<select id="checkcount" parameterType="java.lang.String" resultType="int">	
+		SELECT COUNT(*) COUNT FROM MESSAGE WHERE FRIEND_ID = #{my_id} AND CHECKCOUNT = 1
+	</select>
+	
+	<!-- 각각의 친구 안 읽은 메세지 개수 -->
+	<select id="list_checkcount" parameterType="Map" resultType="int">	
+		SELECT COUNT(*) COUNT FROM MESSAGE 
+		WHERE ( FRIEND_ID = #{my_id} AND MY_ID = #{friend_id} ) 
+		AND CHECKCOUNT = 1
+	</select>
+	
+	<!-- 친구리스트에 마지막 메세지 -->
+	<select id="last_message" parameterType="java.lang.String" resultType="message">
+		SELECT P.PROFILE_IMAGE, M1.*
+		FROM MESSAGE M1,
+		(
+		    SELECT MAX(MESSAGE_IDX) AS MESSAGE_IDX
+		    FROM MESSAGE
+		    WHERE MY_ID = #{my_id} OR FRIEND_ID = #{my_id}
+		    GROUP BY ROOM_NAME
+		) M2, PROFILE P 
+		WHERE M1.MESSAGE_IDX = M2.MESSAGE_IDX
+		AND DECODE(#{my_id}, MY_ID, FRIEND_ID, MY_ID) = P.MEMBER_ID
+	</select>
+</mapper>
+

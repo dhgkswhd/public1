@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="friendsapply">
+	
+	<!-- 친구 요청 (테이블에 내 아이디, 친구아이디, 요청일자 인서트) -->
+	<insert id="friendsApply" parameterType="friendsapply" useGeneratedKeys="false">
+		INSERT INTO FRIENDS_APPLY VALUES ( seq_friends_apply.nextVal, #{sender_id}, #{receiver_id}, TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi') )
+	</insert>
+	
+	
+	<!-- 친구 요청 취소 (테이블에서 날려버림)-->
+	<delete id="friendsApplyCancel" parameterType="friendsapply">
+		DELETE FROM FRIENDS_APPLY WHERE SENDER_ID = #{sender_id} AND RECEIVER_ID = #{receiver_id}
+	</delete>
+	
+	
+	<!-- 친구 프로필 페이지로 이동 시 친구요청 상태 가져오기 -->
+	<select id="applyStatus" parameterType="Map" resultType="int">
+		SELECT COUNT(*) AS COUNT FROM FRIENDS_APPLY WHERE SENDER_ID = #{my_id} AND RECEIVER_ID = #{friend_id}
+	</select>
+	
+	
+	<!-- 친구신청 알림 수 (몇명이 친구신청 했는지) count 가져오기 -->	
+	<select id="getApplyCount" parameterType="java.lang.String" resultType="int">	
+		SELECT COUNT(*) AS COUNT FROM FRIENDS_APPLY WHERE RECEIVER_ID = #{sender_id}
+	</select>
+	
+	
+	<!-- 나에게 친구요청한 인간들 리스트 가져오기 -->
+	<select id="getFriendsApplyList" parameterType="java.lang.String" resultType="friendsapply">
+		SELECT * FROM FRIENDS_APPLY WHERE RECEIVER_ID = #{sender_id}
+	</select>
+	
+	<!-- 친구 수락/거절 시 데이터 삭제 -->
+	<delete id="deleteData" parameterType="friendsapply">
+		DELETE FROM FRIENDS_APPLY WHERE SENDER_ID = #{sender_id} AND RECEIVER_ID = #{receiver_id}
+	</delete>
+	
+</mapper>

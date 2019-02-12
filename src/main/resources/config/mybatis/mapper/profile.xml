@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="profile">
+	
+	<!-- 로그인 할 때, 친구목록 가져오기 -->
+	<select id="getFriendsList" parameterType="java.lang.String" resultType="profile">
+		SELECT P.PROFILE_IMAGE, P.MEMBER_ID
+		FROM PROFILE P, FRIENDS F
+		WHERE F.FRIEND_ID = P.MEMBER_ID 
+		AND F.MY_ID = #{my_id}
+	</select>
+	
+	<!-- 회원가입 시 프로필 값 초기화 시켜줌 -->
+	<insert id="initProfile" parameterType="member" useGeneratedKeys="false">
+		INSERT INTO PROFILE VALUES ( seq_profile.nextVal, #{member_id}, 'init.jpg', 'no_text', #{member_phonenumber} )
+	</insert>
+	
+	<!-- 내 프로필 가져오기 or 친구 프로필 가져오기 -->	
+	<select id="getProfile" parameterType="java.lang.String" resultType="profile">	
+		SELECT * FROM PROFILE WHERE MEMBER_ID = #{id} 
+	</select>
+	
+	<!-- 내 프로필 내용 수정 -->
+	<update id="update_text" parameterType="Map">
+		UPDATE PROFILE SET PROFILE_TEXT = #{text} WHERE MEMBER_ID = #{my_id}
+	</update>
+	
+	<!-- 내 프로필 사진 수정 -->
+	<update id="update_img" parameterType="profile">
+		UPDATE PROFILE SET PROFILE_IMAGE = #{profile_image} WHERE MEMBER_ID = #{member_id}
+	</update>
+	
+</mapper>

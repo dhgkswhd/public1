@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<bean id="factoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 마이바티스 세션 객체를 만들면서 dataSource를 아까 만든 객체로 주입 -->
+		<property name="dataSource" ref="ds"/>
+		
+		<!-- 쿼리를 작성해둔 xml 파일을 매핑 -->
+		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml"/>
+		
+	</bean>
+	
+	<bean id="sqlSessionBean" class="org.mybatis.spring.SqlSessionTemplate">
+		<!-- 객체를 만들면서 생성자에 위에서 만든 객체를 주입 -->
+		<constructor-arg ref="factoryBean"/>
+	</bean>		
+</beans>

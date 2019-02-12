@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="comments">
+	
+	<!-- 댓글 & 답글 작성-->
+	<insert id="text_regi" parameterType="comments" useGeneratedKeys="false">
+		INSERT INTO COMMENTS VALUES
+						( seq_comments.nextVal, 	<!-- 시퀀스 PK -->
+									#{user_id}, 	<!-- 작성자 -->
+							  #{comments_text}, 	<!-- 내용 -->
+     TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi'), 	<!-- 작성일시 -->
+							       #{feed_idx}, 	<!-- 피드 글 번호 -->
+						    #{comments_refNum}, 	<!-- 댓글번호 / 댓글일경우 참조할 부모댓글이 없어서 0, 답글이면 부모댓글번호 -->
+							   #{comments_div} )	<!-- 댓글인지 답글인지 여부 (댓글:0, 답글:1) -->
+	</insert>
+	
+	<!-- 메인창에서 피드에 달린 댓글 가져오기 -->
+	<select id="getComments" parameterType="int" resultType="comments">
+		SELECT
+		COMMENTS.FEED_IDX AS FEED_IDX,
+		COMMENTS.COMMENTS_IDX AS COMMENTS_IDX,
+		PROFILE.PROFILE_IMAGE AS PROFILE_IMAGE,  			<!-- 댓글 작성한 회원 프로필사진 --> 
+		COMMENTS.USER_ID AS USER_ID,			 			<!-- 댓글 작성한 회원 아이디 -->
+		COMMENTS.COMMENTS_TEXT AS COMMENTS_TEXT, 		 	<!-- 댓글 작성한 회원 댓글 내용 -->
+		COMMENTS.COMMENTS_REGIDATE AS COMMENTS_REGIDATE, 	<!-- 댓글 작성일시 -->
+		COMMENTS.COMMENTS_DIV AS COMMENTS_DIV      			<!-- 댓글인지 답글인지 판단여부 -->
+		FROM 
+		FEED, PROFILE, COMMENTS
+		WHERE 
+		FEED.FEED_IDX = #{feed_idx} 
+		AND COMMENTS.FEED_IDX = #{feed_idx}
+		AND COMMENTS.USER_ID = PROFILE.MEMBER_ID
+		ORDER BY COMMENTS_IDX
+	</select>
+	
+	<!-- 모달창에서 댓글 + 답글 가져오기 -->
+	<select id="getCommentsAll" parameterType="int" resultType="comments">
+		SELECT p.PROFILE_IMAGE, c.*
+		FROM COMMENTS c, PROFILE p
+		WHERE FEED_IDX = #{feed_idx} AND p.MEMBER_ID = c.USER_ID
+		START WITH c.COMMENTS_DIV = 0
+		CONNECT BY PRIOR c.COMMENTS_IDX = c.COMMENTS_REFNUM
+	</select>
+</mapper>

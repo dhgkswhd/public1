@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+
+	<!-- 아이디 중복체크 -->
+	<select id="checkId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT MEMBER_ID FROM MEMBER WHERE MEMBER_ID = #{paramId}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="insertMemberData" parameterType="member" useGeneratedKeys="false">
+		INSERT INTO MEMBER VALUES ( seq_member.nextVal, #{member_id}, #{member_pwd}, #{member_phonenumber}, TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi') )
+	</insert>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="find_pw" parameterType="Map" resultType="java.lang.String">
+		SELECT NVL(MEMBER_PWD, 0) FROM MEMBER WHERE MEMBER_ID = #{id} AND MEMBER_PHONENUMBER = #{pn}
+	</select>
+	
+	<!-- 로그인한 회원정보 획득 -->	
+	<select id="getMemberData" parameterType="Map" resultType="member">	
+		SELECT * FROM MEMBER WHERE MEMBER_ID = #{id} AND MEMBER_PWD = #{pwd}
+	</select>
+	
+	<!-- 로그인한 회원 프로필정보 획득 -->
+	<select id="getMemberProfile" parameterType="Map" resultType="profile">
+		SELECT * FROM PROFILE WHERE MEMBER_ID = #{id}
+	</select>
+
+</mapper>

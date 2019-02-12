@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="friends">
+	
+	<!-- 이미 친구인지 확인 -->
+	<select id="checkFriend" parameterType="Map" resultType="int">
+		SELECT COUNT(*) AS COUNT FROM FRIENDS WHERE MY_ID = #{my_id} AND FRIEND_ID = #{friend_id}
+	</select>
+	
+	<!-- 친구 성공시 각 아이디 위치만 바꿔서 인서트 두번 - 1 -->
+	<insert id="friendConnected_sender" parameterType="friendsapply" useGeneratedKeys="false">
+		INSERT INTO FRIENDS VALUES ( seq_friends.nextVal, #{sender_id}, #{receiver_id}, TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi') )
+	</insert>
+	
+	<!-- 친구 성공시 각 아이디 위치만 바꿔서 인서트 두번 - 2 -->
+	<insert id="friendConnected_receiver" parameterType="friendsapply" useGeneratedKeys="false">
+		INSERT INTO FRIENDS VALUES ( seq_friends.nextVal, #{receiver_id}, #{sender_id}, TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi') )
+	</insert>
+	
+	<!-- 친구 수 가져오기 -->
+	<select id="getFriendsCount" parameterType="java.lang.String" resultType="int">
+		SELECT NVL(COUNT(*), 0) FROM FRIENDS WHERE MY_ID = #{id}
+	</select>
+	
+</mapper>

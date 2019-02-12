@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "HTTP://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<!-- 내장 캐시 비활성화 -->
+		<setting name="cacheEnabled" value="false" />
+		<setting name="useGeneratedKeys" value="true" />
+		
+		<!-- PreparedStatement 재사용 -->
+		<setting name="defaultExecutorType" value="REUSE" />
+	</settings>
+	
+	<typeAliases>
+		<typeAlias alias="feed" type="com.fg.vo.FeedVO"/>
+		<typeAlias alias="friends" type="com.fg.vo.FriendsVO"/>
+		<typeAlias alias="friendsapply" type="com.fg.vo.FriendsApplyVO"/>
+		<typeAlias alias="member" type="com.fg.vo.MemberVO"/>
+		<typeAlias alias="profile" type="com.fg.vo.ProfileVO"/>
+		<typeAlias alias="comments" type="com.fg.vo.CommentsVO"/>
+		<typeAlias alias="message" type="com.fg.vo.MessageVO"/>
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="config/mybatis/mapper/feed.xml"/>
+		<mapper resource="config/mybatis/mapper/friends.xml"/>
+		<mapper resource="config/mybatis/mapper/friendsapply.xml"/>
+		<mapper resource="config/mybatis/mapper/member.xml"/>
+		<mapper resource="config/mybatis/mapper/profile.xml"/>
+		<mapper resource="config/mybatis/mapper/comments.xml"/>
+		<mapper resource="config/mybatis/mapper/message.xml"/>
+	</mappers>
+</configuration>

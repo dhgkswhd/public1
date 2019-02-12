@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="feed">
+
+
+	<!-- 게시물 업로드 -->
+	<insert id="insertFeed" parameterType="feed" useGeneratedKeys="false">
+		INSERT INTO FEED VALUES ( seq_feed.nextVal, #{user_id}, #{feed_image}, #{feed_text}, TO_CHAR(sysdate, 'yyyy-mm-dd am hh24:mi') )
+	</insert>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="deleteContent" parameterType="int">
+		DELETE FROM FEED WHERE FEED_IDX = #{feed_idx}
+	</delete>
+	
+	<!-- 게시물 수정 -->
+	<update id="updateContent" parameterType="Map">
+		UPDATE FEED SET FEED_TEXT = #{text} WHERE FEED_IDX = #{feed_idx}
+	</update>
+	
+	<!-- 검색어 자동완성 (회원아이디로 회원 프로필사진 + 아이디 찾기) -->
+	<select id="searchUser" parameterType="Map" resultType="profile">
+		SELECT PROFILE_IMAGE, MEMBER_ID FROM PROFILE WHERE MEMBER_ID LIKE '%'||#{user_id}||'%' AND NOT MEMBER_ID = #{my_id}
+	</select>
+	
+	<!-- 게시물 수 가져오기 -->
+	<select id="getFeedCount" parameterType="java.lang.String" resultType="int">
+		SELECT NVL(COUNT(*), 0) FROM FEED WHERE USER_ID = #{id}
+	</select>
+	
+	<!-- 내 피드 불러오기 or 친구 피드 블러오기 -->
+	<select id="getFeed" parameterType="java.lang.String" resultType="feed">
+		SELECT * FROM FEED WHERE USER_ID = #{id}
+	</select>
+	
+	<!-- 피드메인 페이지로 이동할 때, 내 친구들 프로필사진 가져오기 -->
+	<select id="getFriendsFeedList" parameterType="java.lang.String" resultType="feed">
+		SELECT PROFILE.PROFILE_IMAGE AS friend_profileImg, FEED.*
+		FROM FEED, FRIENDS, PROFILE 
+		WHERE FRIENDS.MY_ID = #{my_id}
+		AND FRIENDS.FRIEND_ID = FEED.USER_ID
+		AND FRIENDS.FRIEND_ID = PROFILE.MEMBER_ID
+		ORDER BY FEED.FEED_REGIDATE DESC
+	</select>
+	
+	<!-- 모달창 띄울때 해당 게시물 작성자 프로필사진 + 게시물 내용 가져오기 -->
+	<select id="getContent" parameterType="int" resultType="feed">
+		SELECT 
+		PROFILE.PROFILE_IMAGE AS friend_profileImg,
+		FEED.*
+		FROM
+		FEED, PROFILE
+		WHERE 
+		FEED.FEED_IDX = #{feed_idx}
+		AND FEED.USER_ID = PROFILE.MEMBER_ID
+		ORDER BY FEED.FEED_REGIDATE DESC
+	</select>
+	
+</mapper>
